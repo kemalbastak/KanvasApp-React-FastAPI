@@ -47,8 +47,50 @@ function Board(props){
         const finish = board.columns[destination.droppableId];
 
         if (start === finish){
+            const newTaskIds = Array.from(start.taskIds);
+            newTaskIds.splice(source.index, 1)
+            newTaskIds.splice(destination.index,0 , draggableId)
+
+            const newColumn = {
+                ...start,
+                taskIds: newTaskIds
+            }
+            setBoard({
+                ...board,
+                columns: {
+                    ...board.columns,
+                    [newColumn.id]: newColumn
+                }
+            });
+            return;
 
         }
+
+        const startTaskIds = Array.from(start.taskIds);
+
+        startTaskIds.splice(source.index, 1);
+        const newStartColumn ={
+            ...start,
+            taskIds: startTaskIds
+        }
+
+        const finishTaskIds = Array.from(finish.taskIds);
+        finishTaskIds.splice(destination.index, 0, draggableId);
+
+        const newFinishColumn = {
+            ...finish,
+            taskIds: finishTaskIds
+        }
+
+        setBoard({
+            ...board,
+            columns: {
+                ...board.columns,
+                [newStartColumn.id]: newStartColumn,
+                [newFinishColumn.id]: newFinishColumn
+            }
+        });
+        return;
 
     }
 
@@ -61,7 +103,7 @@ function Board(props){
                         board.columnOrder.map((columnId, index) => {
                         const column = board.columns[columnId];
                         const tasks = column.taskIds.map(taskIds => board.tasks[taskIds]);
-                        return <Column key={column.id} column={column} tasks={tasks} index={index} />
+                        return <Column key={column.id} column={column} tasks={tasks} index={index} board={board} setBoard={setBoard} />
                         })
                     }
                     {provided.placeholder}
